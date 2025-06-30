@@ -4,86 +4,189 @@
   <meta charset="UTF-8">
   <title>Davids Veterans Digital Lotto Draw Beta Version @Tox</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --success-color: #27ae60;
+      --danger-color: #e74c3c;
+      --light-gray: #ecf0f1;
+      --dark-gray: #7f8c8d;
     }
-
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    
+    h1, h2, h3 {
+      color: var(--primary-color);
+    }
+    
+    h1 {
+      border-bottom: 2px solid var(--secondary-color);
+      padding-bottom: 10px;
+      margin-bottom: 30px;
+    }
+    
     .ticket {
-      border: 2px solid #444;
-      border-radius: 6px;
-      padding: 10px;
-      margin: 20px 0;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 25px;
       position: relative;
     }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(12, 40px);
-      gap: 5px;
-      margin-bottom: 10px;
-    }
-
-    .cell {
-      width: 40px;
-      height: 40px;
-      background: #f0f0f0;
-      text-align: center;
-      line-height: 40px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .cell.selected {
-      background: #27ae60;
-      color: white;
-      border: 2px solid #145a32;
-    }
-
+    
     .ticket-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
     }
-
+    
+    .ticket-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      margin: 0;
+    }
+    
+    .selection-count {
+      color: var(--dark-gray);
+      font-size: 0.9rem;
+      margin-left: 10px;
+    }
+    
     .ticket-controls {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       align-items: center;
     }
-
-    .summary {
-      margin-top: 30px;
-      padding: 10px;
-      border-top: 2px solid #888;
-    }
-
-    .delete-btn {
-      background-color: #e74c3c;
-      color: white;
+    
+    .btn {
+      padding: 8px 15px;
       border: none;
       border-radius: 4px;
-      padding: 2px 8px;
       cursor: pointer;
-      font-size: 12px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
-
-    .selection-count {
-      margin-left: 10px;
-      color: #666;
+    
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+    
+    .btn-primary {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+    
+    .btn-success {
+      background-color: var(--success-color);
+      color: white;
+    }
+    
+    .btn-danger {
+      background-color: var(--danger-color);
+      color: white;
+    }
+    
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--dark-gray);
+      color: var(--dark-gray);
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+    
+    .cell {
+      width: 100%;
+      aspect-ratio: 1;
+      background: var(--light-gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid #ddd;
+    }
+    
+    .cell:hover {
+      background: #ddd;
+    }
+    
+    .cell.selected {
+      background: var(--success-color);
+      color: white;
+      border-color: #1e8449;
+      transform: scale(1.05);
+    }
+    
+    .summary {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-top: 30px;
+    }
+    
+    .summary h3 {
+      margin-top: 0;
+      color: var(--primary-color);
+    }
+    
+    .add-ticket-btn {
+      background-color: var(--success-color);
+      color: white;
+      padding: 10px 20px;
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+    
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: repeat(5, 1fr);
+      }
+      
+      .ticket-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .ticket-controls {
+        width: 100%;
+        justify-content: space-between;
+      }
     }
   </style>
 </head>
 <body>
-
-  <h2>🎟️ Davids Veterans Digital Lotto Draw Beta Version @Tox</h2>
-  <button onclick="addTicket()">➕ Add Ticket</button>
+  <h1>🎟️ Davids Veterans Digital Lotto Draw</h1>
+  <button class="btn add-ticket-btn" onclick="addTicket()">➕ Add Ticket</button>
   <div id="tickets-container"></div>
 
-  <div class="summary" id="summary"></div>
+  <div class="summary" id="summary">
+    <h3>Summary</h3>
+    <p>No tickets created yet.</p>
+  </div>
 
   <script>
     let ticketCounter = 0;
@@ -100,40 +203,40 @@
       const header = document.createElement("div");
       header.className = "ticket-header";
 
-      const controls = document.createElement("div");
-      controls.className = "ticket-controls";
-
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.className = "ticket-checkbox";
-      checkbox.checked = true;
-
-      const label = document.createElement("label");
-      label.textContent = `Ticket ${ticketCounter}`;
-
+      const titleContainer = document.createElement("div");
+      const title = document.createElement("h3");
+      title.className = "ticket-title";
+      title.textContent = `Ticket ${ticketCounter}`;
+      
       const selectionCount = document.createElement("span");
       selectionCount.className = "selection-count";
       selectionCount.textContent = "(0/6 selected)";
+      
+      titleContainer.appendChild(title);
+      titleContainer.appendChild(selectionCount);
+
+      const controls = document.createElement("div");
+      controls.className = "ticket-controls";
 
       const autoBtn = document.createElement("button");
-      autoBtn.textContent = "🎲 Auto-Generate";
+      autoBtn.className = "btn btn-primary";
+      autoBtn.innerHTML = '<span>🎲</span> Auto-Generate';
       autoBtn.onclick = () => autoGenerate(ticketId);
 
       const clearBtn = document.createElement("button");
-      clearBtn.textContent = "🗑️ Clear";
+      clearBtn.className = "btn btn-outline";
+      clearBtn.innerHTML = '<span>🗑️</span> Clear';
       clearBtn.onclick = () => clearSelections(ticketId);
 
       const deleteBtn = document.createElement("button");
-      deleteBtn.className = "delete-btn";
-      deleteBtn.textContent = "❌ Delete";
+      deleteBtn.className = "btn btn-danger";
+      deleteBtn.innerHTML = '<span>✕</span> Close';
       deleteBtn.onclick = () => deleteTicket(ticketId);
 
-      controls.appendChild(checkbox);
-      controls.appendChild(label);
-      controls.appendChild(selectionCount);
       controls.appendChild(autoBtn);
       controls.appendChild(clearBtn);
       controls.appendChild(deleteBtn);
+      header.appendChild(titleContainer);
       header.appendChild(controls);
 
       ticket.appendChild(header);
@@ -225,28 +328,26 @@
       let selectedCount = 0;
 
       tickets.forEach((ticket, index) => {
-        const checkbox = ticket.querySelector(".ticket-checkbox");
-        if (checkbox && checkbox.checked) {
-          const numbers = Array.from(ticket.querySelectorAll(".cell.selected"))
-            .map(cell => Number(cell.textContent))
-            .sort((a, b) => a - b);
-          if (numbers.length > 0) {
-            selectedCount++;
-            summaryText += `<p><strong>Ticket ${index + 1}:</strong> [ ${numbers.join(", ")} ]</p>`;
-          }
+        const numbers = Array.from(ticket.querySelectorAll(".cell.selected"))
+          .map(cell => Number(cell.textContent))
+          .sort((a, b) => a - b);
+        
+        if (numbers.length > 0) {
+          selectedCount++;
+          summaryText += `<p><strong>Ticket ${index + 1}:</strong> [ ${numbers.join(", ")} ]</p>`;
         }
       });
 
       summaryDiv.innerHTML = `
         <h3>Summary</h3>
-        <p>You have <strong>${selectedCount}</strong> active ticket(s) with selections.</p>
-        ${summaryText || "<p>No numbers selected in active tickets.</p>"}
+        ${selectedCount > 0 
+          ? `<p>You have <strong>${selectedCount}</strong> ticket(s) with selections.</p>${summaryText}`
+          : "<p>No numbers selected in any tickets.</p>"}
       `;
     }
 
     // Add first ticket on page load
     addTicket();
   </script>
-
 </body>
 </html>
