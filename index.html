@@ -353,12 +353,16 @@
         <h3>Summary</h3>
         ${selectedCount > 0 
           ? `<p>You have <strong>${selectedCount}</strong> ticket(s) with selections.</p>${summaryText}`
-          : "<p>No numbers selected in any tickets.</p>"}
+          : "<p>No numbers selected in any tickets. Click Add Ticket to continue</p>"}
       `;
     }
 
     // Add first ticket on page load
     addTicket();
   </script>
+
+  <div id="tickets-container"></div>
+  <button class="btn add-ticket-btn" onclick="addTicket()">➕ Add Ticket</button>
+  <div id="tickets-container"></div>
 </body>
 </html>
