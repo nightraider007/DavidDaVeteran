@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lotto Draw Interface</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    .ticket {
+      border: 2px solid #444;
+      border-radius: 6px;
+      padding: 10px;
+      margin: 20px 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 40px);
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+
+    .cell {
+      width: 40px;
+      height: 40px;
+      background: #f0f0f0;
+      text-align: center;
+      line-height: 40px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .cell.selected {
+      background: #27ae60;
+      color: white;
+      border: 2px solid #145a32;
+    }
+
+    .ticket-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .ticket-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .selected-ticket {
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Digital Lotto Draw</h2>
+  <button onclick="addTicket()">➕ Add Ticket</button>
+
+  <div id="tickets-container"></div>
+
+  <script>
+    let ticketCounter = 0;
+
+    function addTicket() {
+      const ticketId = `ticket-${++ticketCounter}`;
+      const container = document.getElementById("tickets-container");
+
+      const ticket = document.createElement("div");
+      ticket.className = "ticket";
+      ticket.id = ticketId;
+
+      // Header with radio & auto-generate
+      const header = document.createElement("div");
+      header.className = "ticket-header";
+
+      const controls = document.createElement("div");
+      controls.className = "ticket-controls";
+
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "selected-ticket";
+      radio.className = "selected-ticket";
+
+      const label = document.createElement("label");
+      label.textContent = `Ticket ${ticketCounter}`;
+
+      const autoBtn = document.createElement("button");
+      autoBtn.textContent = "🎲 Auto-Generate";
+      autoBtn.onclick = () => autoGenerate(ticketId);
+
+      controls.appendChild(radio);
+      controls.appendChild(label);
+      controls.appendChild(autoBtn);
+      header.appendChild(controls);
+
+      ticket.appendChild(header);
+
+      // Grid
+      const grid = document.createElement("div");
+      grid.className = "grid";
+
+      for (let i = 1; i <= 60; i++) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.textContent = i;
+
+        cell.addEventListener("click", () => {
+          const selected = ticket.querySelectorAll(".cell.selected");
+          if (cell.classList.contains("selected")) {
+            cell.classList.remove("selected");
+          } else if (selected.length < 6) {
+            cell.classList.add("selected");
+          }
+        });
+
+        grid.appendChild(cell);
+      }
+
+      ticket.appendChild(grid);
+      container.appendChild(ticket);
+    }
+
+    function autoGenerate(ticketId) {
+      const ticket = document.getElementById(ticketId);
+      const cells = Array.from(ticket.querySelectorAll(".cell"));
+
+      // Clear previous selections
+      cells.forEach(cell => cell.classList.remove("selected"));
+
+      const numbers = new Set();
+      while (numbers.size < 6) {
+        numbers.add(Math.floor(Math.random() * 60) + 1);
+      }
+
+      cells.forEach(cell => {
+        if (numbers.has(Number(cell.textContent))) {
+          cell.classList.add("selected");
+        }
+      });
+    }
+
+    // Add initial 1 ticket
+    addTicket();
+  </script>
+</body>
+</html>
