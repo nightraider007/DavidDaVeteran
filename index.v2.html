@@ -14,7 +14,6 @@
       border-radius: 6px;
       padding: 10px;
       margin: 20px 0;
-      position: relative;
     }
 
     .grid {
@@ -60,21 +59,6 @@
       padding: 10px;
       border-top: 2px solid #888;
     }
-
-    .delete-btn {
-      background-color: #e74c3c;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 2px 8px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-
-    .selection-count {
-      margin-left: 10px;
-      color: #666;
-    }
   </style>
 </head>
 <body>
@@ -106,14 +90,10 @@
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.className = "ticket-checkbox";
-      checkbox.checked = true;
+      checkbox.checked = true; // Auto-check new tickets
 
       const label = document.createElement("label");
       label.textContent = `Ticket ${ticketCounter}`;
-
-      const selectionCount = document.createElement("span");
-      selectionCount.className = "selection-count";
-      selectionCount.textContent = "(0/6 selected)";
 
       const autoBtn = document.createElement("button");
       autoBtn.textContent = "🎲 Auto-Generate";
@@ -123,17 +103,10 @@
       clearBtn.textContent = "🗑️ Clear";
       clearBtn.onclick = () => clearSelections(ticketId);
 
-      const deleteBtn = document.createElement("button");
-      deleteBtn.className = "delete-btn";
-      deleteBtn.textContent = "❌ Delete";
-      deleteBtn.onclick = () => deleteTicket(ticketId);
-
       controls.appendChild(checkbox);
       controls.appendChild(label);
-      controls.appendChild(selectionCount);
       controls.appendChild(autoBtn);
       controls.appendChild(clearBtn);
-      controls.appendChild(deleteBtn);
       header.appendChild(controls);
 
       ticket.appendChild(header);
@@ -153,10 +126,7 @@
             cell.classList.remove("selected");
           } else if (selected.length < 6) {
             cell.classList.add("selected");
-          } else {
-            alert("Maximum 6 numbers per ticket!");
           }
-          updateSelectionCount(ticketId);
           updateSummary();
         });
 
@@ -165,7 +135,6 @@
 
       ticket.appendChild(grid);
       container.appendChild(ticket);
-      updateSelectionCount(ticketId);
     }
 
     function autoGenerate(ticketId) {
@@ -175,20 +144,17 @@
       // Clear existing
       cells.forEach(cell => cell.classList.remove("selected"));
 
-      const numbers = [];
-      const pool = Array.from({ length: 60 }, (_, i) => i + 1);
-      while (numbers.length < 6 && pool.length > 0) {
-        const randomIndex = Math.floor(Math.random() * pool.length);
-        numbers.push(pool.splice(randomIndex, 1)[0]);
+      const numbers = new Set();
+      while (numbers.size < 6) {
+        numbers.add(Math.floor(Math.random() * 60) + 1);
       }
 
       cells.forEach(cell => {
-        if (numbers.includes(Number(cell.textContent))) {
+        if (numbers.has(Number(cell.textContent))) {
           cell.classList.add("selected");
         }
       });
 
-      updateSelectionCount(ticketId);
       updateSummary();
     }
 
@@ -197,25 +163,7 @@
       ticket.querySelectorAll(".cell.selected").forEach(cell => {
         cell.classList.remove("selected");
       });
-      updateSelectionCount(ticketId);
       updateSummary();
-    }
-
-    function deleteTicket(ticketId) {
-      const ticket = document.getElementById(ticketId);
-      ticket.remove();
-      updateSummary();
-    }
-
-    function updateSelectionCount(ticketId) {
-      const ticket = document.getElementById(ticketId);
-      if (!ticket) return;
-      
-      const selectedCount = ticket.querySelectorAll(".cell.selected").length;
-      const countElement = ticket.querySelector(".selection-count");
-      if (countElement) {
-        countElement.textContent = `(${selectedCount}/6 selected)`;
-      }
     }
 
     function updateSummary() {
@@ -225,8 +173,8 @@
       let selectedCount = 0;
 
       tickets.forEach((ticket, index) => {
-        const checkbox = ticket.querySelector(".ticket-checkbox");
-        if (checkbox && checkbox.checked) {
+        const isChecked = ticket.querySelector(".ticket-checkbox").checked;
+        if (isChecked) {
           const numbers = Array.from(ticket.querySelectorAll(".cell.selected"))
             .map(cell => Number(cell.textContent))
             .sort((a, b) => a - b);
@@ -239,8 +187,8 @@
 
       summaryDiv.innerHTML = `
         <h3>Summary</h3>
-        <p>You have <strong>${selectedCount}</strong> active ticket(s) with selections.</p>
-        ${summaryText || "<p>No numbers selected in active tickets.</p>"}
+        <p>You have selected <strong>${selectedCount}</strong> ticket(s).</p>
+        ${summaryText || "<p>No tickets selected yet.</p>"}
       `;
     }
 
